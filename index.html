@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2563eb">
+  <title>PDF ke JPG — Konverter Online</title>
+  <style>
+    :root{--blue:#2563eb;--ink:#172033;--muted:#64748b;--line:#dbe3ef;--bg:#f4f7fb}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .top{background:linear-gradient(120deg,#1d4ed8,#4f46e5);color:white;padding:28px 16px 42px;text-align:center}
+    .top h1{margin:0 0 8px;font-size:clamp(25px,5vw,36px)}
+    .top p{margin:0;color:#e0e7ff}
+    main{width:min(900px,calc(100% - 24px));margin:-22px auto 40px}
+    .panel{background:white;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 12px 35px #1720330d;margin-bottom:16px}
+    .drop{border:2px dashed #93aeea;border-radius:15px;background:#f8faff;padding:30px 14px;text-align:center;cursor:pointer}
+    .drop.drag{background:#eaf1ff;border-color:var(--blue)}
+    .file-icon{font-size:42px;margin-bottom:8px}
+    .drop h2{font-size:19px;margin:4px 0 8px}
+    .drop p{color:var(--muted);font-size:14px;margin:0 0 15px}
+    button,.button{border:0;border-radius:10px;background:var(--blue);color:white;font-weight:700;padding:12px 16px;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+    button:disabled{opacity:.45;cursor:not-allowed}
+    .secondary{background:#eaf0ff;color:#1d4ed8}
+    input[type=file]{display:none}
+    .settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+    label.setting{font-weight:650;font-size:14px;display:flex;flex-direction:column;gap:7px}
+    select,input[type=number]{width:100%;border:1px solid var(--line);border-radius:9px;padding:11px;background:white;color:var(--ink);font:inherit}
+    .privacy{font-size:13px;color:#475569;background:#f0fdf4;border:1px solid #bbf7d0;padding:11px 12px;border-radius:10px;margin-top:16px}
+    .file-row{display:flex;align-items:center;gap:12px;background:#f8fafc;border:1px solid var(--line);padding:12px;border-radius:12px;margin-top:15px}
+    .file-row .meta{min-width:0;flex:1}.file-row strong{display:block;overflow-wrap:anywhere}.sub{color:var(--muted);font-size:13px;margin-top:3px}
+    .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+    .progress-wrap{display:none;margin-top:15px}.progress{height:9px;border-radius:20px;background:#e2e8f0;overflow:hidden}.bar{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#7c3aed);transition:width .2s}
+    #status{font-size:14px;color:var(--muted);margin-top:8px}
+    .results-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    .results-head h2{font-size:20px;margin:0}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;margin-top:16px}
+    .page-card{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+    .thumb{height:190px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;padding:8px}
+    .thumb img{max-width:100%;max-height:100%;object-fit:contain;box-shadow:0 2px 8px #0001}
+    .page-info{padding:10px}.page-info strong{display:block;font-size:14px;margin-bottom:7px}.page-info button{width:100%;font-size:13px;padding:9px}
+    .empty{color:var(--muted);text-align:center;padding:18px 0}
+    footer{text-align:center;color:var(--muted);font-size:12px;padding:0 16px 24px}
+    @media(max-width:560px){.panel{padding:15px}.settings{grid-template-columns:1fr}.drop{padding:24px 12px}.thumb{height:160px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <h1>📄 PDF ke JPG</h1>
+    <p>Ubah halaman PDF menjadi gambar JPG dengan mudah</p>
+  </header>
+  <main>
+    <section class="panel">
+      <div class="drop" id="drop">
+        <div class="file-icon">📂</div>
+        <h2>Pilih file PDF</h2>
+        <p>Ketuk tombol di bawah atau seret file PDF ke area ini.</p>
+        <label class="button" for="pdfFile">Pilih PDF</label>
+        <input id="pdfFile" type="file" accept="application/pdf,.pdf">
+      </div>
+      <div id="fileInfo"></div>
+      <div class="settings">
+        <label class="setting">Resolusi gambar
+          <select id="scale">
+            <option value="1.5">Standar (sekitar 108 DPI)</option>
+            <option value="2" selected>Tinggi (sekitar 144 DPI)</option>
+            <option value="3">Sangat tinggi (sekitar 216 DPI)</option>
+            <option value="4">Maksimum (sekitar 288 DPI)</option>
+          </select>
+        </label>
+        <label class="setting">Kualitas JPG
+          <select id="quality">
+            <option value="0.75">Hemat ukuran — 75%</option>
+            <option value="0.85" selected>Seimbang — 85%</option>
+            <option value="0.95">Kualitas tinggi — 95%</option>
+            <option value="1">Maksimum — 100%</option>
+          </select>
+        </label>
+      </div>
+      <div class="privacy">🔒 <strong>Privasi:</strong> PDF diproses langsung di browser perangkat Anda. File tidak dikirim ke server kami.</div>
+      <div class="actions">
+        <button id="convertBtn" disabled>✨ Konversi ke JPG</button>
+        <button id="resetBtn" class="secondary" disabled>Reset</button>
+      </div>
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress"><div class="bar" id="bar"></div></div>
+        <div id="status" role="status">Menyiapkan...</div>
+      </div>
+    </section>
+    <section class="panel" id="resultsPanel" hidden>
+      <div class="results-head">
+        <h2>Hasil konversi <span id="count"></span></h2>
+        <button id="zipBtn" disabled>⬇ Unduh semua (ZIP)</button>
+      </div>
+      <div id="results" class="grid"></div>
+    </section>
+  </main>
+  <footer>PDF ke JPG Converter · Berjalan di browser · Untuk file PDF yang Anda miliki atau berhak gunakan</footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    const fileInput = document.getElementById('pdfFile');
+    const drop = document.getElementById('drop');
+    const fileInfo = document.getElementById('fileInfo');
+    const convertBtn = document.getElementById('convertBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const progressWrap = document.getElementById('progressWrap');
+    const bar = document.getElementById('bar');
+    const status = document.getElementById('status');
+    const resultsPanel = document.getElementById('resultsPanel');
+    const results = document.getElementById('results');
+    const zipBtn = document.getElementById('zipBtn');
+    const count = document.getElementById('count');
+    let selectedFile = null;
+    let converted = [];
+
+    function fmtBytes(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+    function chooseFile(file) {
+      if (!file) return;
+      if (!(file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'))) {
+        alert('Silakan pilih file PDF.'); return;
+      }
+      selectedFile = file;
+      converted = [];
+      fileInfo.innerHTML = `<div class="file-row"><div style="font-size:30px">📄</div><div class="meta"><strong>${escapeHtml(file.name)}</strong><div class="sub">${fmtBytes(file.size)} · Siap dikonversi</div></div></div>`;
+      convertBtn.disabled = false;
+      resetBtn.disabled = false;
+      resultsPanel.hidden = true;
+      results.innerHTML = '';
+      zipBtn.disabled = true;
+      progressWrap.style.display = 'none';
+    }
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    fileInput.addEventListener('change', e => chooseFile(e.target.files[0]));
+    drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
+    drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('drag'); chooseFile(e.dataTransfer.files[0]); });
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
+    function addResult(pageNo, blob, dataUrl) {
+      const filename = `halaman-${String(pageNo).padStart(3,'0')}.jpg`;
+      converted.push({ filename, blob });
+      const card = document.createElement('article');
+      card.className = 'page-card';
+      const thumb = document.createElement('div'); thumb.className = 'thumb';
+      const img = document.createElement('img'); img.src = dataUrl; img.alt = `Pratinjau halaman ${pageNo}`;
+      thumb.appendChild(img);
+      const info = document.createElement('div'); info.className = 'page-info';
+      const title = document.createElement('strong'); title.textContent = `Halaman ${pageNo} · ${fmtBytes(blob.size)}`;
+      const btn = document.createElement('button'); btn.textContent = '⬇ Unduh JPG';
+      btn.addEventListener('click', () => downloadBlob(blob, filename));
+      info.append(title, btn); card.append(thumb, info); results.appendChild(card);
+    }
+    convertBtn.addEventListener('click', async () => {
+      if (!selectedFile) return;
+      convertBtn.disabled = true;
+      fileInput.disabled = true;
+      progressWrap.style.display = 'block';
+      resultsPanel.hidden = false;
+      results.innerHTML = '';
+      converted = [];
+      zipBtn.disabled = true;
+      try {
+        status.textContent = 'Membaca PDF...';
+        const bytes = await selectedFile.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({data: bytes}).promise;
+        const scale = Number(document.getElementById('scale').value);
+        const quality = Number(document.getElementById('quality').value);
+        for (let i = 1; i <= pdf.numPages; i++) {
+          status.textContent = `Memproses halaman ${i} dari ${pdf.numPages}...`;
+          const page = await pdf.getPage(i);
+          const viewport = page.getViewport({scale});
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d', {alpha:false});
+          canvas.width = Math.ceil(viewport.width);
+          canvas.height = Math.ceil(viewport.height);
+          context.fillStyle = '#ffffff';
+          context.fillRect(0, 0, canvas.width, canvas.height);
+          await page.render({canvasContext: context, viewport}).promise;
+          const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+          if (!blob) throw new Error('Browser gagal membuat gambar. Coba resolusi yang lebih rendah.');
+          const dataUrl = canvas.toDataURL('image/jpeg', Math.min(quality, 0.8));
+          addResult(i, blob, dataUrl);
+          canvas.width = 0; canvas.height = 0;
+          bar.style.width = `${Math.round(i / pdf.numPages * 100)}%`;
+          count.textContent = `(${converted.length} halaman)`;
+          await new Promise(resolve => setTimeout(resolve, 0));
+        }
+        status.textContent = `Selesai! ${converted.length} halaman berhasil dikonversi.`;
+        zipBtn.disabled = converted.length === 0;
+      } catch (err) {
+        console.error(err);
+        status.textContent = 'Gagal memproses PDF: ' + (err.message || 'Kesalahan tidak diketahui') + '. Pastikan PDF tidak rusak atau terkunci.';
+      } finally {
+        convertBtn.disabled = false;
+        fileInput.disabled = false;
+      }
+    });
+    zipBtn.addEventListener('click', async () => {
+      if (!converted.length) return;
+      zipBtn.disabled = true;
+      zipBtn.textContent = 'Membuat ZIP...';
+      try {
+        const zip = new JSZip();
+        converted.forEach(item => zip.file(item.filename, item.blob));
+        const blob = await zip.generateAsync({type:'blob'}, meta => {
+          status.textContent = `Menyiapkan ZIP... ${Math.round(meta.percent)}%`;
+        });
+        const baseName = (selectedFile?.name || 'pdf').replace(/\.pdf$/i,'').replace(/[^\w.-]+/g,'_');
+        downloadBlob(blob, `${baseName}-jpg.zip`);
+        status.textContent = 'ZIP berhasil dibuat dan diunduh.';
+      } catch (err) {
+        status.textContent = 'Tidak dapat membuat ZIP: ' + err.message;
+      } finally {
+        zipBtn.disabled = false;
+        zipBtn.textContent = '⬇ Unduh semua (ZIP)';
+      }
+    });
+    resetBtn.addEventListener('click', () => {
+      selectedFile = null; converted = []; fileInput.value = '';
+      fileInfo.innerHTML = ''; results.innerHTML = ''; resultsPanel.hidden = true;
+      convertBtn.disabled = true; resetBtn.disabled = true; zipBtn.disabled = true;
+      progressWrap.style.display = 'none'; bar.style.width = '0%'; count.textContent = '';
+      status.textContent = 'Menyiapkan...';
+    });
+  </script>
+</body>
+</html>
